@@ -14,7 +14,12 @@ const bookSchema= new mongoose.Schema({
         ref: 'myAuthor'
     },
     price: Number,
-    address: String
+    address: String,
+    publisher: {
+        type: ObjectId,
+        ref: 'Publisher'
+    }
+
 
 }, {timestamps: true} )
 
