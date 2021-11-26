@@ -101,7 +101,7 @@ const verifyOtp = async function (req, res){
 
     let Otp = req.body.otp;
     let txid = req.body.txnId;
-    console.log("my otp is", Otp , "and transctionid is",  txid )
+    //console.log("my otp is", Otp , "and transctionid is",  txid )
 
        let options = {
         method : "post", 
