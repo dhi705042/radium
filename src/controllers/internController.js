@@ -13,10 +13,6 @@ const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
 }
 
-//let interests = [];
-//let aaa ;
-
-// creating college
 
 const createIntern = async function (req, res) {
     try {
@@ -33,12 +29,12 @@ const createIntern = async function (req, res) {
         //validation starts
 
         if (!isValid(name)) {
-            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide valid name' })
+            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide name' })
             return
         }
 
         if (!isValid(email)) {
-            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide valid email' })
+            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide  email' })
             return
         }
          email = email.trim();
@@ -69,14 +65,14 @@ const createIntern = async function (req, res) {
         const isNumberAlreadyUsed = await InternModel.findOne({mobile}); 
 
         if(isNumberAlreadyUsed) {
-            res.status(400).send({status: false, message: `${mobile} mobile is already registered`})
+            res.status(400).send({status: false, message: `${mobile} is already registered`})
             return
         }
 
         const isEmailAlreadyUsed = await InternModel.findOne({email}); 
 
         if(isEmailAlreadyUsed) {
-            res.status(400).send({status: false, message: `${email} email is already registered`})
+            res.status(400).send({status: false, message: `${email}  is already registered`})
             return
         }
 
@@ -88,6 +84,7 @@ const createIntern = async function (req, res) {
 
         if(!collegeData){
             res.status(400).send({status: false, message: ` not a valid college name or the college is not active at present`})
+            return
         }
 
    
@@ -129,10 +126,10 @@ const getCollegeDetails = async function (req, res){
        // console.log(clgId)
 
          let internsData = await InternModel.find({collegeId: clgId, isDeleted: false}).select({_id: 1, name:1,email: 1, mobile: 1})
-         if(internsData.length == 0){
-            res.status(204).send({ status: true, message: ` No interns applied for this college` })
-            return
-         }
+        //  if(internsData.length == 0){
+        //     res.status(200).send({ status: true, message: 'No interns applied for this college' })
+        //     return
+        //  }
        
         let newData = {
             name: collegeDetail.name, 
@@ -141,7 +138,7 @@ const getCollegeDetails = async function (req, res){
             internsData: internsData 
         }
 
-        res.status(200).send({ status: true, message: `college details with intern ` , data: newData })
+        res.status(200).send({ status: true, message: `college details with intern ` , data: newData })  
 
     }catch(err){
         res.status(500).send({ status: false, message: err.message });

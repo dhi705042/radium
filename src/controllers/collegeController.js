@@ -27,14 +27,14 @@ const createCollege = async function (req, res) {
         //validation starts
 
         if (!isValid(name)) {
-            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide valid name' })
+            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide name' })
             return
         }
 
         name = name.toLowerCase();
 
         if (!isValid(fullName)) {
-            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide valid fullName' })
+            res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide fullName' })
             return
         }
         if (!isValid(logoLink)) {
