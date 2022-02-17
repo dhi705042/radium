@@ -12,8 +12,8 @@ router.get('/test-me', function (req, res) {
 router.post('/pantry/createPantry', pantryController.createPantry )
 router.get('/pantry/:pantryId', pantryController.getPantryDetails )
 router.post('/pantry/:pantryId/basket/:bucketName', bucketController.createBucket)
-router.put('/pantry/:pantryId/basket/:bucketName', bucketController.updatePantry)
-router.get('/pantry/:pantryId/basket/:bucketName', bucketController.updatePantry)
+router.put('/pantry/:pantryId/basket/:bucketName', bucketController.updateBucket)
+router.get('/pantry/:pantryId/basket/:bucketName', bucketController.getBasketDetail)
 router.delete('/pantry/:pantryId/basket/:bucketName', bucketController.deleteBasket)
 
 module.exports = router; 

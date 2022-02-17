@@ -30,22 +30,16 @@ const createBucket = async function (req, res) {
 
         }
 
-        existingBucketName = await bucketModel.findOne({ bucketName: bucketName, pantryId:pantryId })
+        existingBucketName = await bucketModel.findOne({ bucketName: bucketName, pantryId: pantryId })
         if (existingBucketName) {
             existingBucketName.store = requestBody.store;
             const replaceBucket = await bucketModel.create(existingBucketName)
-            return res.status(200).send({ status: true, message: 'pantry replaced successfully', data: replaceBucket })
+            return res.status(200).send({ status: true, message: 'bucket replaced successfully', data: replaceBucket })
         }
         let ttl = Math.floor(Date.now() / 1000)
         requestBody.ttl = ttl;
         requestBody.pantryId = pantryId;
         requestBody.bucketName = bucketName;
-
-        // let newObj = { 
-        //     // myBucketName: bucketName,
-        //     // pantryId: pantryId,
-        //     ttl: ttl
-        // }
 
         const createBucket = await bucketModel.create(requestBody)
 
@@ -58,7 +52,7 @@ const createBucket = async function (req, res) {
 
         await pantryModel.findByIdAndUpdate({ _id: pantryId }, filter, { new: true })
 
-        res.status(201).send({ status: true, message: 'pantry created successfully', data: createBucket })
+        res.status(201).send({ status: true, message: 'bucket created successfully', data: createBucket })
 
     }
     catch (err) {
@@ -67,7 +61,7 @@ const createBucket = async function (req, res) {
 }
 
 
-const updatePantry = async function (req, res) {
+const updateBucket = async function (req, res) {
     try {
         let requestBody = req.body;
         let pantryId = req.params.pantryId;
@@ -99,22 +93,22 @@ const updatePantry = async function (req, res) {
         let obj = bucketDetails.posts;
 
         let index = Object.keys(requestBody)
-        
+
         let values = Object.values(requestBody)
-        
-        for(let i = 0; i<index.length; i++){
-            
 
-        if (obj.hasOwnProperty(index[i])) {
-            obj[index[i]] = values[i]
+        for (let i = 0; i < index.length; i++) {
 
-        } else {
-            obj[index[i]] = values[i]
+
+            if (obj.hasOwnProperty(index[i])) {
+                obj[index[i]] = values[i]
+
+            } else {
+                obj[index[i]] = values[i]
+            }
+
         }
-
-}
-             const bucket = await bucketModel.findOneAndUpdate({ bucketName: bucketName }, { posts: obj }, { new: true })
-             return res.status(201).send({ status: true, message: 'pantry created successfully', data: bucket })
+        const bucket = await bucketModel.findOneAndUpdate({ bucketName: bucketName }, { posts: obj }, { new: true })
+        return res.status(201).send({ status: true, message: 'bucket updated successfully', data: bucket })
 
 
     } catch (err) {
@@ -125,7 +119,7 @@ const updatePantry = async function (req, res) {
 const getBasketDetail = async function (req, res) {
     try {
         let pantryId = req.params.pantryId;
-        console.log(pantryId)
+      //  console.log(pantryId)
         let bucketName = req.params.bucketName;
 
         if (!validate.isValidObjectId(pantryId)) {
@@ -137,7 +131,7 @@ const getBasketDetail = async function (req, res) {
         }
 
         const isPantryPresent = await pantryModel.findById({ _id: pantryId })
-        console.log(isPantryPresent)
+       // console.log(isPantryPresent)
         if (!isPantryPresent) {
             return res.status(400).send({ status: false, message: `pantry with ${pantryId} does not exist ` })
         }
@@ -147,13 +141,13 @@ const getBasketDetail = async function (req, res) {
 
         }
 
-       let existingBucketdata = await bucketModel.findOne({ bucketName: bucketName, pantryId: pantryId })
-        if (existingBucketdata) {
-            return res.status(400).send({ status: false, message: ` ${pantbucketNameryId} does not exist ` })
+        let existingBucketdata = await bucketModel.findOne({ bucketName: bucketName, pantryId: pantryId })
+        if (!existingBucketdata) {
+            return res.status(400).send({ status: false, message: ` ${bucketName} does not exist ` })
 
         }
 
-        return res.status(201).send({ status: true, message: 'bucket fetched successfully', data: existingBucketName })
+        return res.status(201).send({ status: true, message: 'bucket fetched successfully', data: existingBucketdata })
 
     }
     catch (err) {
@@ -165,9 +159,9 @@ const deleteBasket = async function (req, res) {
     try {
 
         let pantryId = req.params.pantryId;
-        console.log(pantryId)
+       // console.log(pantryId)
         let bucketName = req.params.bucketName;
-        console.log(bucketName)
+       // console.log(bucketName)
 
         if (!validate.isValid(pantryId)) {
             return res.status(400).send({ status: false, message: `${pantryId} is not a valid pantryId or not present ` })
@@ -177,7 +171,7 @@ const deleteBasket = async function (req, res) {
         if (!validate.isValidObjectId(pantryId)) {
             return res.status(400).send({ status: false, message: "Invalid pantryId in params." })
         }
-        
+
 
         const isPantryPresent = await pantryModel.findById({ _id: pantryId })
 
@@ -185,7 +179,7 @@ const deleteBasket = async function (req, res) {
             return res.status(400).send({ status: false, message: `pantry with ${pantryId} does not exist ` })
         }
         let name = isPantryPresent.name;
-        console.log(name)
+      //  console.log(name)
 
         if (!validate.isValid(bucketName)) {
             return res.status(400).send({ status: false, message: `${bucketName} is not provided ` })
@@ -196,27 +190,27 @@ const deleteBasket = async function (req, res) {
             return res.status(400).send({ status: false, message: `${bucketName} does not exist with this ${pantryId} id` })
 
         }
-        await bucketModel.deleteOne({ pantryId: pantryId , bucketName: bucketName })
-        let bucketCount = await bucketModel.find({pantryId: pantryId })
-        let count = bucketCount.length;  
-        let query = {percentFull: count}
-        console.log(count)
-        await pantryModel.updateOne({ name: name}, query )
+        await bucketModel.deleteOne({ pantryId: pantryId, bucketName: bucketName })
+        let bucketCount = await bucketModel.find({ pantryId: pantryId })
+        let count = bucketCount.length;
+        let query = { percentFull: count }
+       // console.log(count)
+        await pantryModel.updateOne({ name: name }, query)
 
 
         return res.status(200).send({ status: true, message: 'bucket deleted successfully' })
 
     }
-    catch(err) {
+    catch (err) {
         res.status(500).send({ status: false, msg: err.message })
     }
 }
 
 
 
-    module.exports = {
-        createBucket,
-        updatePantry,
-        getBasketDetail,
-        deleteBasket
-    }
+module.exports = {
+    createBucket,
+    updateBucket,
+    getBasketDetail,
+    deleteBasket
+}
